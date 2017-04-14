@@ -114,10 +114,10 @@
       }
 
       $scope.sendRequest = function() {
-        $('#submit-request').addClass('disabled')
         $scope.RequestForm.$submitted = true
 
         if ($scope.RequestForm.$valid) {
+          $('#submit-request').addClass('disabled')
           $http.get('hello.php').then(function(res) {
             $scope.showMessage(res.status)
             $scope.request = {}
