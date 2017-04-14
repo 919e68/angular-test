@@ -122,7 +122,7 @@
               text: $scope.request.text, 
               number: $scope.request.number, 
               time: new Date().toLocaleString() 
-            }, 'http://localhost')
+            }, location.origin)
 
             $scope.showMessage(res.status)
             $scope.request = {}
