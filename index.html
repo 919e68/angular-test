@@ -73,26 +73,25 @@
 
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
   <script>
-    function addToList() {
-      var row = '' +
-        '<tr>' +
-          '<td>'+ $('#text').val() +'</td>' +
-          '<td>'+ $('#number').val() +'</td>' +
-          '<td>'+ new Date().toLocaleString() +'</td>' +
-        '</tr>'
-
-      $('#request-table').append(row)
-    }
-
     angular.module('sample', [])
     .factory('Interceptor', function() {
+      
+      window.addEventListener("message", function(e) {
+        var row = '' +
+          '<tr>' +
+            '<td>'+ e.data.text +'</td>' +
+            '<td>'+ e.data.number +'</td>' +
+            '<td>'+ e.data.time +'</td>' +
+          '</tr>'
+
+        $('#request-table').append(row)
+      }, false)
+
       return {
         response: function(response) {
-          addToList()
           return response
         },
         responseError: function(response) {
-          addToList()
           return response
         }
       }
@@ -119,6 +118,12 @@
         if ($scope.RequestForm.$valid) {
           $('#submit-request').addClass('disabled')
           $http.get('hello.php').then(function(res) {
+            window.postMessage({ 
+              text: $scope.request.text, 
+              number: $scope.request.number, 
+              time: new Date().toLocaleString() 
+            }, 'http://localhost')
+
             $scope.showMessage(res.status)
             $scope.request = {}
             $('#submit-request').removeClass('disabled')
