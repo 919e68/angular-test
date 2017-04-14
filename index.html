@@ -48,7 +48,7 @@
         </div>
         
         <div class="button">
-          <button class="btn btn-success btn-sm" ng-click="sendRequest()">Click</button>
+          <button class="btn btn-success btn-sm" id="submit-request" ng-click="sendRequest()">Click</button>
         </div>
       </div>
     </div>
@@ -114,12 +114,14 @@
       }
 
       $scope.sendRequest = function() {
+        $('#submit-request').addClass('disabled')
         $scope.RequestForm.$submitted = true
 
         if ($scope.RequestForm.$valid) {
           $http.get('hello.php').then(function(res) {
             $scope.showMessage(res.status)
             $scope.request = {}
+            $('#submit-request').removeClass('disabled')
           })
         }
       }
