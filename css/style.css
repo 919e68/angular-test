@@ -1,0 +1,59 @@
+body {
+  padding: 0px;
+  margin: 0px;
+}
+
+.container {
+  width: 400px;
+  height: 600px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -300px;
+  margin-left: -200px;
+  border: 1px solid #ccc;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+}
+
+.container > .header {
+  background: #e74c3c;
+  height: 100px;
+  line-height: 100px;
+  padding-left: 15px;
+  color: #fff;
+}
+
+.container > .content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content > .form {
+  padding: 10px;
+}
+
+.content > .requests {
+  padding: 10px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.container > .footer {
+  background: #3498db;
+  height: 100px;
+  padding: 0px 25px 0px 15px;
+}
+
+.footer > div {
+  display: inline-block;
+  height: 100px;
+  line-height: 100px;
+  color: #fff;
+}
+
+.footer > .button {
+  float: right;
+}

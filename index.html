@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Angular Sample</title>
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-overide.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="//code.jquery.com/jquery-latest.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </head>
+
+  <body ng-app="sample">
+    <div class="container" ng-controller="SampleController">
+      <div class="header">Awesome Header</div>
+
+      <div class="content">
+        <div class="form">
+          <form name="RequestForm">
+            <div class="form-group" ng-class="{ 'has-error': (RequestForm.$submitted || RequestForm.text.$touched) && RequestForm.text.$invalid }">
+              <label>Text Input</label>
+              <input type="text" id="text" class="form-control input-sm" name="text" ng-model="request.text" ng-required="true" ng-maxlength="50">
+            </div>
+
+            <div class="form-group" ng-class="{ 'has-error': (RequestForm.$submitted || RequestForm.number.$touched) && RequestForm.number.$invalid }">
+              <label>Number Input</label>
+              <input type="number" id="number" class="form-control input-sm" name="number" ng-model="request.number" ng-required="true" ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/" step="0.01">
+            </div>
+          </form>
+        </div>
+        <div class="requests">
+          <pre>{{ RequestForm.$valid | json }}</pre>
+          <table class="table table-bordered" id="request-table">
+            <tr>
+              <th>Text</th>
+              <th>Number</th>
+              <th>Time</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="title">
+          Awesome Footer
+        </div>
+        
+        <div class="button">
+          <button class="btn btn-success btn-sm" ng-click="sendRequest()">Click</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="msg-modal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="request-title">Message</h4>
+          </div>
+          <div class="modal-body">
+            <p id="request-msg">Some text in the modal.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
+  <script>
+    function addToList() {
+      var row = '' +
+        '<tr>' +
+          '<td>'+ $('#text').val() +'</td>' +
+          '<td>'+ $('#number').val() +'</td>' +
+          '<td>'+ new Date().toLocaleString() +'</td>' +
+        '</tr>'
+
+      $('#request-table').append(row)
+    }
+
+    angular.module('sample', [])
+    .factory('Interceptor', function() {
+      return {
+        response: function(response) {
+          addToList()
+          return response
+        },
+        responseError: function(response) {
+          addToList()
+          return response
+        }
+      }
+    })
+    .config(function($httpProvider) {
+      $httpProvider.interceptors.push('Interceptor')
+    })
+    .controller('SampleController', function($scope, $http) {
+      $scope.showMessage = function(code) {
+        if (code == 404) {
+          $('#request-title').text('Error Message')
+          $('#request-msg').text('Request Error')
+        } else {
+          $('#request-title').text('Success Message')
+          $('#request-msg').text('Request Successful')
+        }
+
+        $('#msg-modal').modal('show') 
+      }
+
+      $scope.sendRequest = function() {
+        $scope.RequestForm.$submitted = true
+
+        if ($scope.RequestForm.$valid) {
+          $http.get('hello.php').then(function(res) {
+            $scope.showMessage(res.status)
+            $scope.request = {}
+          })
+        }
+      }
+    })
+
+  </script>
+</html>
